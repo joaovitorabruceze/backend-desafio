@@ -3,7 +3,7 @@ using CsvHelper.Configuration;
 
 namespace backend_desafio.Mappers
 {
-    public class TimeSeriesMap : ClassMap<TimeSeries>
+    public class TimeSeriesMap : ClassMap<TimeSeriesModel>
     {
         public TimeSeriesMap()
         {

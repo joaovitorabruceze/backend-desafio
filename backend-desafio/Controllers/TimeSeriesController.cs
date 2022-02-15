@@ -10,10 +10,10 @@ namespace backend_desafio.Controllers
     {
         private readonly ILogger<TimeSeriesController> _logger;
 
-        public TimeSeriesController (ILogger<TimeSeriesController> logger) { _logger = logger; }
+        public TimeSeriesController(ILogger<TimeSeriesController> logger) { _logger = logger; }
 
         [HttpPost("process-csv-file")]
-        public async Task<ActionResult> ProcessCsvFile(IFormFile file)
+        public async Task<ActionResult> ProcessCsvFile([FromForm] IFormFile file)
         {
             var memoryStream = new MemoryStream(new byte[file.Length]);
             await file.CopyToAsync(memoryStream);
@@ -28,9 +28,31 @@ namespace backend_desafio.Controllers
 
             csvFile.Context.TypeConverterOptionsCache.GetOptions<DateTime?>().NullValues.Add("null");
 
-            var records = csvFile.GetRecords<TimeSeries>().ToList();
+            var records = csvFile.GetRecords<TimeSeriesModel>().ToList();
 
             return Ok(records);
+        }
+
+        [HttpPost("get-name-file")]
+        public async Task<ActionResult> getName([FromForm] IFormFile file)
+        {
+            var memoryStream = new MemoryStream(new byte[file.Length]);
+            await file.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+            var reader = new StreamReader(memoryStream);
+            var config = new CsvConfiguration(CultureInfo.GetCultureInfo("pt-BR"))
+            {
+                Delimiter = ";",
+                HasHeaderRecord = true,
+
+            };
+
+            var csv = new CsvReader(reader, config);
+            csv.Read();
+            csv.ReadHeader();
+            string[] headerRow = csv.HeaderRecord;
+            return Ok(headerRow);
+
         }
     }
 }

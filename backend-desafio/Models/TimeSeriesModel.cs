@@ -2,7 +2,7 @@
 
 namespace backend_desafio.models
 {
-    public class TimeSeries
+    public class TimeSeriesModel
     {
         [Name("Data")]
         public DateTime Date { get; set; }
